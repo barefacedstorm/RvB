@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Political Mood Tracker</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            margin: 10px;
+            text-align: center;
+        }
+        .article-list {
+            list-style-type: none;
+            padding: 0;
+            width: 80%;
+        }
+        .article-list a {
+            color: #e0e0e0;
+            text-decoration: none;
+        }
+        .article-list a:hover {
+            text-decoration: underline;
+        }
+        .article-list .sentiment {
+            font-weight: bold;
+        }
+        #moodChart {
+            width: 50px;
+            height: 50px;
+        }
+        .article-list a:visited {
+            color: #b0bec5; /* Lighter grey for visited links */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Current U.S. Political Mood Tracker</h1>
+        <canvas id="moodChart"></canvas>
+        <h2>Latest News</h2>
+        <ul class="article-list">
+            {% for article in articles %}
+            <li>
+                <a href="{{ article.url }}" target="_blank">{{ article.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const moodData = {{ mood_data | tojson }};
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            const moodChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Red', 'Blue', 'Neutral'],
+                    datasets: [{
+                        label: 'Political Mood',
+                        data: [moodData.Red, moodData.Blue, moodData.Neutral],
+                        backgroundColor: ['#ff0000', '#0000ff', '#00ff00'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Political Mood Pie Chart'
+                        }
+                    }
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
